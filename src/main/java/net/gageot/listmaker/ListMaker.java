@@ -99,10 +99,6 @@ public class ListMaker<T> implements Iterable<T> {
 		return new ListMaker<T>(filter(values, not(filter)));
 	}
 
-	public <S extends T> ListMaker<T> exclude(Class<S> subClass) {
-		return exclude(Predicates.instanceOf(subClass));
-	}
-
 	public <P> ListMaker<T> exclude(Function<? super T, P> transform, Predicate<? super P> filter) {
 		return exclude(compose(filter, transform));
 	}

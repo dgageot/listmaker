@@ -33,40 +33,102 @@ import static org.fest.assertions.MapAssert.*;
 
 public class ListMakerTest {
 	@Test
-	public void canMakeListFromIterable() {
-		Iterable<String> iterable = Arrays.asList("A", "B", "C");
+	public void canBuildFromValues() {
+		Iterable<String> list = with("A", "B", "C");
 
-		List<String> list = with(iterable).toList();
+		assertThat(list).containsExactly("A", "B", "C");
+	}
 
-		assertThat(list).containsSequence("A", "B", "C");
+	@Test
+	public void canBuildFromArray() {
+		String[] array = {"C", "D", "E"};
+
+		List<String> list = with(array).toList();
+
+		assertThat(list).containsExactly("C", "D", "E");
+	}
+
+	@Test
+	public void canBuildFromVarArgs() {
+		List<String> list = with("D", "E", "F", "G").toList();
+
+		assertThat(list).containsExactly("D", "E", "F", "G");
 	}
 
 	@Test
 	public void canReturnSameListMakerAsTheOnePassed() {
-		ListMaker<String> listMaker = new ListMaker<String>(Arrays.asList("A"));
+		ListMaker<String> listMaker = with(asList("A", "B", "C"));
 
-		assertThat((Object) with(listMaker)).isSameAs(listMaker);
+		ListMaker<String> listMakerOfListMaker = with(listMaker);
+
+		assertThat((Object) listMakerOfListMaker).isSameAs(listMaker);
 	}
 
 	@Test
-	public void canMakeListFromArray() {
-		List<String> list = with("A", "B", "C").toList();
+	public void canMakeList() {
+		Iterable<String> values = asList("A", "B", "C");
 
-		assertThat(list).containsSequence("A", "B", "C");
+		List<String> list = with(values).toList();
+
+		assertThat(list).containsExactly("A", "B", "C");
 	}
 
 	@Test
-	public void canMakeImutableList() {
-		ImmutableList<String> list = with("A", "B", "C").toImmutableList();
+	public void canMakeImmutableList() {
+		Iterable<String> values = asList("A", "B", "C");
 
-		assertThat(list).containsSequence("A", "B", "C");
+		ImmutableList<String> list = with(values).toImmutableList();
+
+		assertThat(list).containsExactly("A", "B", "C");
 	}
 
 	@Test
-	public void canMakeIterableFromValues() {
-		Iterable<String> list = with("A", "B", "C");
+	public void canMakeArray() {
+		String[] array = with("A", "B", "C").toArray(String.class);
 
-		assertThat(list).containsOnly("A", "B", "C");
+		assertThat(array).containsOnly("A", "B", "C");
+	}
+
+	@Test
+	public void canMakeSet() {
+		Set<String> set = with("A", "A", "B", "B", "C", "C").toSet();
+
+		assertThat(set).containsExactly("A", "B", "C");
+	}
+
+	@Test
+	public void canMakeSetUsingTransformation() {
+		Set<String> set = with("A", "a", "B", "b", "C", "c").toSet(TO_UPPERCASE);
+
+		assertThat(set).containsExactly("A", "B", "C");
+	}
+
+	@Test
+	public void canMakeImmutableSet() {
+		ImmutableSet<String> set = with("A", "A", "B", "B", "C", "C").toImmutableSet();
+
+		assertThat(set).containsExactly("A", "B", "C");
+	}
+
+	@Test
+	public void canMakeTreeSet() {
+		TreeSet<Integer> set = with("2", "3", "1", "1", "2", "3").toTreeSet(TO_INTEGER);
+
+		assertThat(set).containsExactly(1, 2, 3);
+	}
+
+	@Test
+	public void canMakeTreeSetWithoutConversion() {
+		TreeSet<String> set = with("2", "3", "1", "1", "2", "3").toTreeSet();
+
+		assertThat(set).containsExactly("1", "2", "3");
+	}
+
+	@Test
+	public void canMakeTreeSetWithOrdering() {
+		Set<String> set = with("2", "3", "1", "1", "2", "3").toTreeSet(Ordering.natural().reverse());
+
+		assertThat(set).containsExactly("3", "2", "1");
 	}
 
 	@Test
@@ -77,134 +139,66 @@ public class ListMakerTest {
 	}
 
 	@Test
-	public void canConvertToArray() {
-		String[] array = with("A", "B", "C").toArray(String.class);
-
-		assertThat(array).containsOnly("A", "B", "C");
-	}
-
-	@Test
 	public void canKeepValuesBasedOnPredicate() {
-		Iterable<String> list = with("A", "B", "C").only(Predicates.in(Arrays.asList("B")));
+		ListMaker<String> filtered = with("A", "B", "C").only(Predicates.equalTo("B"));
 
-		assertThat(list).containsSequence("B");
+		assertThat(filtered).containsExactly("B");
 	}
 
 	@Test
 	public void canExcludeValuesBasedOnPredicate() {
-		Iterable<String> list = with("A", "B", "C").exclude(Predicates.in(Arrays.asList("B")));
+		ListMaker<String> filtered = with("A", "B", "C").exclude(Predicates.equalTo("B"));
 
-		assertThat(list).containsSequence("A", "C");
+		assertThat(filtered).containsExactly("A", "C");
 	}
 
 	@Test
 	public void canKeepValuesBasedOnFunctionAndPredicate() {
-		Iterable<String> list = with("1", "2", "3").only(TO_INTEGER, Predicates.in(Arrays.asList(1)));
+		ListMaker<String> filtered = with("1", "2", "3").only(TO_INTEGER, Predicates.equalTo(1));
 
-		assertThat(list).containsOnly("1");
+		assertThat(filtered).containsExactly("1");
 	}
 
 	@Test
 	public void canExcludeValuesBasedOnFunctionAndPredicate() {
-		Iterable<String> list = with("1", "2", "3").exclude(TO_INTEGER, Predicates.in(Arrays.asList(1)));
+		ListMaker<String> filtered = with("1", "2", "3").exclude(TO_INTEGER, Predicates.equalTo(1));
 
-		assertThat(list).containsOnly("2", "3");
-	}
-
-	@Test
-	public void canExcludeValuesBasedOnClass() {
-		Iterable<Superclass> list = with((Superclass) SubclassA.A, SubclassB.B).exclude(SubclassA.class);
-
-		assertThat(list).containsOnly(SubclassB.B);
-	}
-
-	private interface Superclass {
-		// Marker
-	}
-
-	private enum SubclassA implements Superclass {
-		A
-	}
-
-	private enum SubclassB implements Superclass {
-		B
+		assertThat(filtered).containsExactly("2", "3");
 	}
 
 	@Test
 	public void canExcludeOneValue() {
-		Iterable<String> list = with("A", "B", "C").exclude("A");
+		ListMaker<String> filtered = with("A", "B", "C").exclude("A");
 
-		assertThat(list).containsSequence("B", "C");
+		assertThat(filtered).containsExactly("B", "C");
 	}
 
 	@Test
 	public void canExcludeValueList() {
-		Iterable<String> list = with("A", "B", "C").exclude("A", "C");
+		ListMaker<String> filtered = with("A", "B", "C").exclude("A", "C");
 
-		assertThat(list).containsSequence("B");
+		assertThat(filtered).containsExactly("B");
 	}
 
 	@Test
-	public void canExcludeValues() {
-		Iterable<String> list = with("A", "B", "C").exclude(Sets.newHashSet("A", "B"));
+	public void canExcludeValueSet() {
+		ListMaker<String> filtered = with("A", "B", "C").exclude(Sets.newHashSet("A", "B"));
 
-		assertThat(list).containsSequence("C");
+		assertThat(filtered).containsExactly("C");
 	}
 
 	@Test
 	public void canKeepNonNullValues() {
-		Iterable<String> list = with("A", null, "C").notNulls();
+		ListMaker<String> filtered = with("A", null, "C").notNulls();
 
-		assertThat(list).containsSequence("A", "C");
+		assertThat(filtered).containsExactly("A", "C");
 	}
 
 	@Test
 	public void canTransformValues() {
-		Iterable<String> list = with(1, 2, 3).to(Functions.toStringFunction());
+		ListMaker<String> transformed = with(1, 2, 3).to(Functions.toStringFunction());
 
-		assertThat(list).containsSequence("1", "2", "3");
-	}
-
-	@Test
-	public void canConvertToSet() {
-		Set<String> set = with("A", "A", "B", "B", "C", "C").toSet();
-
-		assertThat(set).containsOnly("A", "B", "C");
-	}
-
-	@Test
-	public void canConvertToSetUsingTransformation() {
-		Set<String> set = with("A", "a", "B", "b", "C", "c").toSet(TO_UPPERCASE);
-
-		assertThat(set).containsOnly("A", "B", "C");
-	}
-
-	@Test
-	public void canConvertToImmutableSet() {
-		ImmutableSet<String> set = with("A", "A", "B", "B", "C", "C").toImmutableSet();
-
-		assertThat(set).containsOnly("A", "B", "C");
-	}
-
-	@Test
-	public void canConvertToTreeSet() {
-		Set<Integer> set = with("2", "3", "1", "1", "2", "3").toTreeSet(TO_INTEGER);
-
-		assertThat(set).containsSequence(1, 2, 3);
-	}
-
-	@Test
-	public void canConvertToTreeSetWithoutConversion() {
-		Set<String> set = with("2", "3", "1", "1", "2", "3").toTreeSet();
-
-		assertThat(set).containsSequence("1", "2", "3");
-	}
-
-	@Test
-	public void canConvertToTreeSetWithComparator() {
-		Set<String> set = with("2", "3", "1", "1", "2", "3").toTreeSet(Ordering.natural().reverse());
-
-		assertThat(set).containsSequence("3", "2", "1");
+		assertThat(transformed).containsExactly("1", "2", "3");
 	}
 
 	@Test
@@ -245,33 +239,33 @@ public class ListMakerTest {
 
 	@Test
 	public void canSort() {
-		Iterable<String> sorted = with("C", "B", "A").sortOn(Ordering.<String>natural());
+		ListMaker<String> sorted = with("C", "B", "A").sortOn(Ordering.<String>natural());
 
-		assertThat(sorted).containsSequence("A", "B", "C");
+		assertThat(sorted).containsExactly("A", "B", "C");
 	}
 
 	@Test
 	public void canSortWitComparator() {
-		Iterable<String> sorted = with("C", "B", "A").sortOn(new Comparator<String>() {
+		ListMaker<String> sorted = with("C", "B", "A").sortOn(new Comparator<String>() {
 			@Override
 			public int compare(String s1, String s2) {
 				return s1.compareTo(s2);
 			}
 		});
 
-		assertThat(sorted).containsSequence("A", "B", "C");
+		assertThat(sorted).containsExactly("A", "B", "C");
 	}
 
 	@Test
 	public void canSortBaseOnTransformation() {
-		Iterable<String> sorted = with("90", "01", "300").sortOn(TO_INTEGER);
+		ListMaker<String> sorted = with("90", "01", "300").sortOn(TO_INTEGER);
 
-		assertThat(sorted).containsSequence("01", "90", "300");
+		assertThat(sorted).containsExactly("01", "90", "300");
 	}
 
 	@Test
 	public void canCombineTransformations() {
-		List<String> months = asList("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+		String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
 		String juneToJuly = with(months).only(startsWith("J")).exclude("January").join(" to ");
 
@@ -286,7 +280,7 @@ public class ListMakerTest {
 	}
 
 	@Test
-	public void canSearchValueUsingPredicate() {
+	public void canSearchValue() {
 		List<String> months = asList("January", "February", "March");
 
 		boolean containsJanuary = with(months).contains(isEqualIgnoreCase("JANUARY"));
@@ -297,7 +291,7 @@ public class ListMakerTest {
 	}
 
 	@Test
-	public void canSearchValueUsingFunction() {
+	public void canSearchValueUsingTransformationFunction() {
 		List<String> months = asList("January", "February", "March");
 
 		boolean containsJanuary = with(months).contains(TO_UPPERCASE, "JANUARY");
@@ -317,7 +311,7 @@ public class ListMakerTest {
 	}
 
 	@Test
-	public void canFindMaximumValueUsingTransformation() {
+	public void canFindMaximumValueUsingTransformationFunction() {
 		List<String> values = asList("0001", "15", "100");
 
 		String max = with(values).maxOnResultOf(TO_INTEGER);
@@ -335,8 +329,8 @@ public class ListMakerTest {
 	}
 
 	@Test
-	public void canFindMinimumValueUsingTransformation() {
-		List<String> values = asList("0001", "15", "100");
+	public void canFindMinimumValueUsingTransformationFunction() {
+		String[] values = {"0001", "15", "100"};
 
 		String max = with(values).minOnResultOf(TO_INTEGER);
 
@@ -344,8 +338,8 @@ public class ListMakerTest {
 	}
 
 	@Test
-	public void canCountUsingAPredicate() {
-		List<String> months = asList("January", "February", "March");
+	public void canCount() {
+		String[] months = {"January", "February", "March"};
 
 		int count = with(months).count(startsWith("J"));
 
@@ -353,8 +347,8 @@ public class ListMakerTest {
 	}
 
 	@Test
-	public void canCountUsingAFunction() {
-		List<String> months = asList("January", "February", "March");
+	public void canCountUsingATransformationFunction() {
+		String[] months = {"January", "February", "March"};
 
 		int count = with(months).count(TO_UPPERCASE, "JANUARY");
 
@@ -372,7 +366,7 @@ public class ListMakerTest {
 
 	@Test
 	public void canIndexBy() {
-		List<String> strings = Arrays.asList("1", "22", "333");
+		String[] strings = {"1", "22", "333"};
 
 		Map<Integer, String> stringByLength = with(strings).indexBy(TO_LENGTH);
 
