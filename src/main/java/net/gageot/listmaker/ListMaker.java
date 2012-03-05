@@ -29,9 +29,9 @@ import static com.google.common.collect.Iterables.*;
 import static java.util.Arrays.asList;
 
 public class ListMaker<T> implements Iterable<T> {
-	final Iterable<T> values;
+	private final Iterable<T> values;
 
-	ListMaker(Iterable<T> values) {
+	private ListMaker(Iterable<T> values) {
 		this.values = values;
 	}
 
@@ -48,15 +48,15 @@ public class ListMaker<T> implements Iterable<T> {
 	}
 
 	public static <T> ListMaker<T> with(T... values) {
-		return new ListMaker<T>(Lists.newArrayList(values));
+		return new ListMaker<T>(Arrays.asList(values));
 	}
 
 	public ListMaker<T> only(Predicate<? super T> filter) {
 		return new ListMaker<T>(filter(values, filter));
 	}
 
-	public <P> ListMaker<T> only(Function<? super T, P> equalTo, P valueToCompareWith) {
-		return only(whereEquals(equalTo, valueToCompareWith));
+	public <P> ListMaker<T> only(Function<? super T, P> transform, P valueToCompareWith) {
+		return only(whereEquals(transform, valueToCompareWith));
 	}
 
 	public <P> ListMaker<T> only(Function<? super T, P> transform, Predicate<? super P> filter) {
@@ -75,12 +75,12 @@ public class ListMaker<T> implements Iterable<T> {
 		return Iterables.find(values, predicate, defaultValue);
 	}
 
-	public <P> T first(Function<? super T, P> equalTo, P valueToCompareWith) {
-		return Iterables.find(values, whereEquals(equalTo, valueToCompareWith));
+	public <P> T first(Function<? super T, P> transform, P valueToCompareWith) {
+		return Iterables.find(values, whereEquals(transform, valueToCompareWith));
 	}
 
-	public <P> T firstOrDefault(Function<? super T, P> equalTo, P valueToCompareWith, T defaultValue) {
-		return Iterables.find(values, whereEquals(equalTo, valueToCompareWith), defaultValue);
+	public <P> T firstOrDefault(Function<? super T, P> transform, P valueToCompareWith, T defaultValue) {
+		return Iterables.find(values, whereEquals(transform, valueToCompareWith), defaultValue);
 	}
 
 	public T first() {
@@ -91,8 +91,8 @@ public class ListMaker<T> implements Iterable<T> {
 		return Iterables.any(values, predicate);
 	}
 
-	public <P> boolean contains(Function<? super T, P> equalTo, P valueToCompareWith) {
-		return Iterables.any(values, whereEquals(equalTo, valueToCompareWith));
+	public <P> boolean contains(Function<? super T, P> transform, P valueToCompareWith) {
+		return Iterables.any(values, whereEquals(transform, valueToCompareWith));
 	}
 
 	public ListMaker<T> exclude(Predicate<? super T> filter) {
@@ -115,8 +115,8 @@ public class ListMaker<T> implements Iterable<T> {
 		return Iterables.size(filter(values, filter));
 	}
 
-	public <P> int count(Function<? super T, P> equalTo, P valueToCompareWith) {
-		return Iterables.size(filter(values, whereEquals(equalTo, valueToCompareWith)));
+	public <P> int count(Function<? super T, P> transform, P valueToCompareWith) {
+		return Iterables.size(filter(values, whereEquals(transform, valueToCompareWith)));
 	}
 
 	public ListMaker<T> sortOn(Ordering<? super T> ordering) {
@@ -237,8 +237,8 @@ public class ListMaker<T> implements Iterable<T> {
 		return Iterables.isEmpty(values);
 	}
 
-	private <P> Predicate<? super T> whereEquals(Function<? super T, P> equalTo, P valueToCompareWith) {
-		return compose(equalTo(valueToCompareWith), equalTo);
+	private <P> Predicate<? super T> whereEquals(Function<? super T, P> transform, P valueToCompareWith) {
+		return compose(equalTo(valueToCompareWith), transform);
 	}
 
 	@Override
