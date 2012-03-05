@@ -371,15 +371,6 @@ public class ListMakerTest {
 	}
 
 	@Test
-	public void canFilterOnValues() {
-		List<String> strings = Arrays.asList("1", "22", "333", "4444");
-
-		Iterable<String> stringsOfLength2Or4 = with(strings).only(TO_LENGTH, 2, 4);
-
-		assertThat(stringsOfLength2Or4).containsExactly("22", "4444");
-	}
-
-	@Test
 	public void canIndexBy() {
 		List<String> strings = Arrays.asList("1", "22", "333");
 
