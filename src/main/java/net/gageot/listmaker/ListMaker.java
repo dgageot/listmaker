@@ -22,16 +22,21 @@ package net.gageot.listmaker;
 import com.google.common.base.*;
 import com.google.common.collect.*;
 
+import javax.annotation.*;
 import java.util.*;
+
+import static com.google.common.base.Preconditions.*;
 
 public class ListMaker<T> implements Iterable<T> {
 	private final Iterable<T> values;
 
 	private ListMaker(Iterable<T> values) {
+		checkNotNull(values);
 		this.values = values;
 	}
 
 	public static <T> ListMaker<T> with(Iterable<T> values) {
+		checkNotNull(values);
 		if (values instanceof ListMaker<?>) {
 			return (ListMaker<T>) values;
 		}
@@ -44,30 +49,38 @@ public class ListMaker<T> implements Iterable<T> {
 	}
 
 	public static <T> ListMaker<T> with(T... values) {
+		checkNotNull(values);
 		return new ListMaker<T>(Arrays.asList(values));
 	}
 
 	public static <V, T> Predicate<? super T> where(Function<? super T, ? extends V> transform, Predicate<? super V> condition) {
+		checkNotNull(transform);
+		checkNotNull(condition);
 		return Predicates.compose(condition, transform);
 	}
 
-	public static <V, T> Predicate<? super T> whereEquals(Function<? super T, ? extends V> transform, V valueToCompareWith) {
+	public static <V, T> Predicate<? super T> whereEquals(Function<? super T, ? extends V> transform, @Nullable V valueToCompareWith) {
+		checkNotNull(transform);
 		return where(transform, Predicates.equalTo(valueToCompareWith));
 	}
 
 	public ListMaker<T> only(Predicate<? super T> condition) {
+		checkNotNull(condition);
 		return new ListMaker<T>(Iterables.filter(values, condition));
 	}
 
 	public ListMaker<T> exclude(Predicate<? super T> condition) {
+		checkNotNull(condition);
 		return only(Predicates.not(condition));
 	}
 
 	public ListMaker<T> exclude(T... valuesToExclude) {
+		checkNotNull(valuesToExclude);
 		return exclude(Arrays.asList(valuesToExclude));
 	}
 
-	public ListMaker<T> exclude(Collection<T> valuesToExclude) {
+	public ListMaker<T> exclude(Collection<? extends T> valuesToExclude) {
+		checkNotNull(valuesToExclude);
 		return exclude(Predicates.in(valuesToExclude));
 	}
 
@@ -76,22 +89,26 @@ public class ListMaker<T> implements Iterable<T> {
 	}
 
 	public T first(Predicate<? super T> condition) {
+		checkNotNull(condition);
 		return Iterables.find(values, condition);
 	}
 
-	public T firstOrDefault(T defaultValue) {
+	public T firstOrDefault(@Nullable T defaultValue) {
 		return Iterables.getFirst(values, defaultValue);
 	}
 
-	public T firstOrDefault(Predicate<? super T> condition, T defaultValue) {
+	public T firstOrDefault(Predicate<? super T> condition, @Nullable T defaultValue) {
+		checkNotNull(condition);
 		return Iterables.find(values, condition, defaultValue);
 	}
 
 	public boolean contains(Predicate<? super T> condition) {
+		checkNotNull(condition);
 		return Iterables.any(values, condition);
 	}
 
 	public int count(Predicate<? super T> condition) {
+		checkNotNull(condition);
 		return Iterables.size(Iterables.filter(values, condition));
 	}
 
@@ -100,10 +117,12 @@ public class ListMaker<T> implements Iterable<T> {
 	}
 
 	public ListMaker<T> sortOn(Comparator<? super T> comparator) {
+		checkNotNull(comparator);
 		return sortOn(Ordering.from(comparator));
 	}
 
 	public ListMaker<T> sortOn(Function<? super T, ? extends Comparable<?>> transform) {
+		checkNotNull(transform);
 		return sortOn(Ordering.natural().onResultOf(transform));
 	}
 
@@ -112,10 +131,12 @@ public class ListMaker<T> implements Iterable<T> {
 	}
 
 	public <R> ListMaker<R> to(Function<? super T, R> transform) {
+		checkNotNull(transform);
 		return new ListMaker<R>(Iterables.transform(values, transform));
 	}
 
 	public <R, C extends Iterable<R>> ListMaker<R> flatMap(Function<? super T, C> transform) {
+		checkNotNull(transform);
 		return new ListMaker<R>(Iterables.concat(Iterables.transform(values, transform)));
 	}
 
@@ -128,14 +149,17 @@ public class ListMaker<T> implements Iterable<T> {
 	}
 
 	public <V extends Comparable<V>> T maxOnResultOf(Function<? super T, V> transform) {
+		checkNotNull(transform);
 		return Ordering.natural().onResultOf(transform).max(values);
 	}
 
 	public <V extends Comparable<V>> T minOnResultOf(Function<? super T, V> transform) {
+		checkNotNull(transform);
 		return Ordering.natural().onResultOf(transform).min(values);
 	}
 
 	public <C extends Collection<T>> C copyTo(C destination) {
+		checkNotNull(destination);
 		Iterables.addAll(destination, values);
 		return destination;
 	}
@@ -148,11 +172,12 @@ public class ListMaker<T> implements Iterable<T> {
 		return ImmutableList.copyOf(values);
 	}
 
-	public String join(String separator) {
+	public String join(@Nullable String separator) {
 		return Joiner.on(separator).join(values);
 	}
 
 	public T[] toArray(Class<T> type) {
+		checkNotNull(type);
 		return Iterables.toArray(values, type);
 	}
 
@@ -161,6 +186,7 @@ public class ListMaker<T> implements Iterable<T> {
 	}
 
 	public <R> Set<R> toSet(Function<? super T, R> transform) {
+		checkNotNull(transform);
 		return Sets.newHashSet(Iterables.transform(values, transform));
 	}
 
@@ -169,16 +195,19 @@ public class ListMaker<T> implements Iterable<T> {
 	}
 
 	public TreeSet<T> toTreeSet(Comparator<? super T> comparator) {
+		checkNotNull(comparator);
 		return copyTo(new TreeSet<T>(comparator));
 	}
 
 	public <R> TreeSet<R> toTreeSet(Function<? super T, R> transform, Comparator<? super R> ordering) {
+		checkNotNull(transform);
 		TreeSet<R> set = new TreeSet<R>(ordering);
 		Iterables.addAll(set, Iterables.transform(values, transform));
 		return set;
 	}
 
 	public <R extends Comparable<R>> TreeSet<R> toTreeSet(Function<? super T, R> transform) {
+		checkNotNull(transform);
 		return toTreeSet(transform, null);
 	}
 
@@ -187,6 +216,7 @@ public class ListMaker<T> implements Iterable<T> {
 	}
 
 	public <R> ImmutableSet<R> toImmutableSet(Function<? super T, R> transform) {
+		checkNotNull(transform);
 		return ImmutableSet.copyOf(Iterables.transform(values, transform));
 	}
 
@@ -199,6 +229,7 @@ public class ListMaker<T> implements Iterable<T> {
 	}
 
 	public <K> Map<K, T> indexBy(Function<? super T, ? extends K> toKey) {
+		checkNotNull(toKey);
 		Map<K, T> map = Maps.newHashMap();
 
 		for (T value : values) {

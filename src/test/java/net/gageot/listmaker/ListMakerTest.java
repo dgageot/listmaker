@@ -167,6 +167,13 @@ public class ListMakerTest {
 	}
 
 	@Test
+	public void canKeepValuesBasedOnFunctionAndValue() {
+		ListMaker<String> filtered = with("a", "b", "c").only(whereEquals(TO_UPPERCASE, "B"));
+
+		assertThat(filtered).containsExactly("b");
+	}
+
+	@Test
 	public void canExcludeValuesBasedOnFunctionAndPredicate() {
 		ListMaker<String> filtered = with("1", "2", "3").exclude(where(TO_INTEGER, equalTo(1)));
 
