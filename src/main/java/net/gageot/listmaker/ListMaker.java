@@ -24,10 +24,6 @@ import com.google.common.collect.*;
 
 import java.util.*;
 
-import static com.google.common.base.Predicates.*;
-import static com.google.common.collect.Iterables.*;
-import static java.util.Arrays.asList;
-
 public class ListMaker<T> implements Iterable<T> {
 	private final Iterable<T> values;
 
@@ -51,72 +47,52 @@ public class ListMaker<T> implements Iterable<T> {
 		return new ListMaker<T>(Arrays.asList(values));
 	}
 
-	public ListMaker<T> only(Predicate<? super T> filter) {
-		return new ListMaker<T>(filter(values, filter));
+	public static <V, T> Predicate<? super T> where(Function<? super T, ? extends V> transform, Predicate<? super V> condition) {
+		return Predicates.compose(condition, transform);
 	}
 
-	public <P> ListMaker<T> only(Function<? super T, P> transform, P valueToCompareWith) {
-		return only(whereEquals(transform, valueToCompareWith));
+	public static <V, T> Predicate<? super T> whereEquals(Function<? super T, ? extends V> transform, V valueToCompareWith) {
+		return where(transform, Predicates.equalTo(valueToCompareWith));
 	}
 
-	public <P> ListMaker<T> only(Function<? super T, P> transform, Predicate<? super P> filter) {
-		return only(compose(filter, transform));
+	public ListMaker<T> only(Predicate<? super T> condition) {
+		return new ListMaker<T>(Iterables.filter(values, condition));
 	}
 
-	public T first(Predicate<? super T> predicate) {
-		return Iterables.find(values, predicate);
+	public ListMaker<T> exclude(Predicate<? super T> condition) {
+		return only(Predicates.not(condition));
 	}
 
-	public T firstOrDefault(T defaultValue) {
-		return Iterables.getFirst(values, defaultValue);
+	public ListMaker<T> exclude(T... valuesToExclude) {
+		return exclude(Arrays.asList(valuesToExclude));
 	}
 
-	public T firstOrDefault(Predicate<? super T> predicate, T defaultValue) {
-		return Iterables.find(values, predicate, defaultValue);
-	}
-
-	public <P> T first(Function<? super T, P> transform, P valueToCompareWith) {
-		return Iterables.find(values, whereEquals(transform, valueToCompareWith));
-	}
-
-	public <P> T firstOrDefault(Function<? super T, P> transform, P valueToCompareWith, T defaultValue) {
-		return Iterables.find(values, whereEquals(transform, valueToCompareWith), defaultValue);
+	public ListMaker<T> exclude(Collection<T> valuesToExclude) {
+		return exclude(Predicates.in(valuesToExclude));
 	}
 
 	public T first() {
 		return values.iterator().next();
 	}
 
-	public boolean contains(Predicate<? super T> predicate) {
-		return Iterables.any(values, predicate);
+	public T first(Predicate<? super T> condition) {
+		return Iterables.find(values, condition);
 	}
 
-	public <P> boolean contains(Function<? super T, P> transform, P valueToCompareWith) {
-		return Iterables.any(values, whereEquals(transform, valueToCompareWith));
+	public T firstOrDefault(T defaultValue) {
+		return Iterables.getFirst(values, defaultValue);
 	}
 
-	public ListMaker<T> exclude(Predicate<? super T> filter) {
-		return new ListMaker<T>(filter(values, not(filter)));
+	public T firstOrDefault(Predicate<? super T> condition, T defaultValue) {
+		return Iterables.find(values, condition, defaultValue);
 	}
 
-	public <P> ListMaker<T> exclude(Function<? super T, P> transform, Predicate<? super P> filter) {
-		return exclude(compose(filter, transform));
+	public boolean contains(Predicate<? super T> condition) {
+		return Iterables.any(values, condition);
 	}
 
-	public ListMaker<T> exclude(T... excludeValues) {
-		return exclude(asList(excludeValues));
-	}
-
-	public ListMaker<T> exclude(Collection<T> excludeValues) {
-		return exclude(in(excludeValues));
-	}
-
-	public int count(Predicate<? super T> filter) {
-		return Iterables.size(filter(values, filter));
-	}
-
-	public <P> int count(Function<? super T, P> transform, P valueToCompareWith) {
-		return Iterables.size(filter(values, whereEquals(transform, valueToCompareWith)));
+	public int count(Predicate<? super T> condition) {
+		return Iterables.size(Iterables.filter(values, condition));
 	}
 
 	public ListMaker<T> sortOn(Ordering<? super T> ordering) {
@@ -132,15 +108,15 @@ public class ListMaker<T> implements Iterable<T> {
 	}
 
 	public ListMaker<T> notNulls() {
-		return new ListMaker<T>(filter(values, Predicates.<T>notNull()));
+		return only(Predicates.<T>notNull());
 	}
 
 	public <R> ListMaker<R> to(Function<? super T, R> transform) {
-		return new ListMaker<R>(transform(values, transform));
+		return new ListMaker<R>(Iterables.transform(values, transform));
 	}
 
 	public <R, C extends Iterable<R>> ListMaker<R> flatMap(Function<? super T, C> transform) {
-		return new ListMaker<R>(Iterables.concat(transform(values, transform)));
+		return new ListMaker<R>(Iterables.concat(Iterables.transform(values, transform)));
 	}
 
 	public T max(Ordering<? super T> ordering) {
@@ -151,12 +127,12 @@ public class ListMaker<T> implements Iterable<T> {
 		return ordering.min(values);
 	}
 
-	public <V extends Comparable<V>> T maxOnResultOf(Function<? super T, V> function) {
-		return Ordering.natural().onResultOf(function).max(values);
+	public <V extends Comparable<V>> T maxOnResultOf(Function<? super T, V> transform) {
+		return Ordering.natural().onResultOf(transform).max(values);
 	}
 
-	public <V extends Comparable<V>> T minOnResultOf(Function<? super T, V> function) {
-		return Ordering.natural().onResultOf(function).min(values);
+	public <V extends Comparable<V>> T minOnResultOf(Function<? super T, V> transform) {
+		return Ordering.natural().onResultOf(transform).min(values);
 	}
 
 	public <C extends Collection<T>> C copyTo(C destination) {
@@ -185,20 +161,20 @@ public class ListMaker<T> implements Iterable<T> {
 	}
 
 	public <R> Set<R> toSet(Function<? super T, R> transform) {
-		return Sets.newHashSet(transform(values, transform));
+		return Sets.newHashSet(Iterables.transform(values, transform));
 	}
 
 	public TreeSet<T> toTreeSet() {
 		return copyTo(new TreeSet<T>());
 	}
 
-	public TreeSet<T> toTreeSet(Comparator<? super T> c) {
-		return copyTo(new TreeSet<T>(c));
+	public TreeSet<T> toTreeSet(Comparator<? super T> comparator) {
+		return copyTo(new TreeSet<T>(comparator));
 	}
 
 	public <R> TreeSet<R> toTreeSet(Function<? super T, R> transform, Comparator<? super R> ordering) {
 		TreeSet<R> set = new TreeSet<R>(ordering);
-		Iterables.addAll(set, transform(values, transform));
+		Iterables.addAll(set, Iterables.transform(values, transform));
 		return set;
 	}
 
@@ -208,6 +184,10 @@ public class ListMaker<T> implements Iterable<T> {
 
 	public ImmutableSet<T> toImmutableSet() {
 		return ImmutableSet.copyOf(values);
+	}
+
+	public <R> ImmutableSet<R> toImmutableSet(Function<? super T, R> transform) {
+		return ImmutableSet.copyOf(Iterables.transform(values, transform));
 	}
 
 	public T getLast() {
@@ -235,10 +215,6 @@ public class ListMaker<T> implements Iterable<T> {
 
 	public boolean isEmpty() {
 		return Iterables.isEmpty(values);
-	}
-
-	private <P> Predicate<? super T> whereEquals(Function<? super T, P> transform, P valueToCompareWith) {
-		return compose(equalTo(valueToCompareWith), transform);
 	}
 
 	@Override
