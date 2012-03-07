@@ -7,7 +7,7 @@
     <packaging>jar</packaging>
 
     <name>ListMaker</name>
-    <description>ListMaker</description>
+    <description>A fluent interface list maker for use with Guava</description>
     <url>https://github.com/dgageot/listmaker</url>
 
     <licenses>
