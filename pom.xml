@@ -3,17 +3,32 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>gageot.net</groupId>
     <artifactId>listmaker</artifactId>
-    <name>ListMaker</name>
     <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>ListMaker</name>
+    <description>ListMaker</description>
+    <url>https://github.com/dgageot/listmaker</url>
+
+    <licenses>
+        <license>
+            <name>GPL3</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <developers>
         <developer>
             <id>dgageot</id>
             <name>David Gageot</name>
         </developer>
     </developers>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -66,6 +81,7 @@
             </plugin>
         </plugins>
     </build>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
