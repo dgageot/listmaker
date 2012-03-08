@@ -8,7 +8,7 @@
 
     <name>ListMaker</name>
     <description>A fluent interface list maker for use with Guava</description>
-    <url>https://github.com/dgageot/listmaker</url>
+    <url>http://listmaker.gageot.net</url>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
