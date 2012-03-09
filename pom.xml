@@ -17,9 +17,9 @@
     </parent>
 
     <scm>
-        <connection>scm:git:git@github.com/dgageot/listmaker.git</connection>
-        <developerConnection>scm:git:git@github.com/dgageot/listmaker.git</developerConnection>
-        <url>git@github.com/dgageot/listmaker.git</url>
+		<connection>scm:git:git@github.com:dgageot/listmaker.git</connection>
+		<url>scm:git:git@github.com:dgageot/listmaker.git</url>
+		<developerConnection>scm:git:git@github.com:dgageot/listmaker.git</developerConnection>
     </scm>
 
     <licenses>
