@@ -2,3 +2,5 @@
 target/
 *.iml
 .privatebuild/
+pom.xml.releaseBackup
+release.properties
