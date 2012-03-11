@@ -28,26 +28,28 @@ import java.util.*;
 import static com.google.common.base.Preconditions.*;
 
 /**
- * TODO.
+ * ListMaker is a fluent interface list maker for use with Guava.<br/> It makes it easy to start from an {@link
+ * Iterable} and apply transformations, filtering and operations on it. Any of these can be combined.
  *
  * @param <T> the type of elements returned by the iterator.
+ * @author David Gageot
  * @since 1.0
  */
-public class ListMaker<T> implements Iterable<T> {
+public final class ListMaker<T> implements Iterable<T> {
 	private final Iterable<T> values;
 
-	/**
-	 * TODO.
-	 */
 	private ListMaker(Iterable<T> values) {
 		checkNotNull(values);
 		this.values = values;
 	}
 
 	/**
-	 * TODO.
+	 * Creates a ListMaker from an {@link Iterable}.
+	 * <p/>
+	 * <b>Note:</b> Trying to create a {@code ListMaker} from another
+	 * {@code ListMaker} returns the original {@code ListMaker}.
 	 *
-	 * @return TODO.
+	 * @return a new {@code ListMaker} or the {@code ListMaker} passed as {@code values)
 	 */
 	public static <T> ListMaker<T> with(Iterable<T> values) {
 		checkNotNull(values);
@@ -58,9 +60,9 @@ public class ListMaker<T> implements Iterable<T> {
 	}
 
 	/**
-	 * TODO.
+	 * Creates an empty {@code ListMaker}.
 	 *
-	 * @return TODO.
+	 * @return an empty {@code ListMaker}
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> ListMaker<T> with() {
@@ -68,9 +70,9 @@ public class ListMaker<T> implements Iterable<T> {
 	}
 
 	/**
-	 * TODO.
+	 * Creates a {@code ListMaker} from a list of values.
 	 *
-	 * @return TODO.
+	 * @return a new {@code ListMaker}
 	 */
 	public static <T> ListMaker<T> with(T... values) {
 		checkNotNull(values);
@@ -82,10 +84,10 @@ public class ListMaker<T> implements Iterable<T> {
 	 *
 	 * @return TODO.
 	 */
-	public static <V, T> Predicate<? super T> where(Function<? super T, ? extends V> transform, Predicate<? super V> condition) {
+	public static <V, T> Predicate<? super T> where(Function<? super T, ? extends V> transform, Predicate<? super V> predicate) {
 		checkNotNull(transform);
-		checkNotNull(condition);
-		return Predicates.compose(condition, transform);
+		checkNotNull(predicate);
+		return Predicates.compose(predicate, transform);
 	}
 
 	/**
@@ -101,27 +103,27 @@ public class ListMaker<T> implements Iterable<T> {
 	/**
 	 * TODO.
 	 *
-	 * @return TODO.
+	 * @return a filtered {@code ListMaker}
 	 */
-	public ListMaker<T> only(Predicate<? super T> condition) {
-		checkNotNull(condition);
-		return new ListMaker<T>(Iterables.filter(values, condition));
+	public ListMaker<T> only(Predicate<? super T> predicate) {
+		checkNotNull(predicate);
+		return new ListMaker<T>(Iterables.filter(values, predicate));
 	}
 
 	/**
 	 * TODO.
 	 *
-	 * @return TODO.
+	 * @return a filtered {@code ListMaker}
 	 */
-	public ListMaker<T> exclude(Predicate<? super T> condition) {
-		checkNotNull(condition);
-		return only(Predicates.not(condition));
+	public ListMaker<T> exclude(Predicate<? super T> predicate) {
+		checkNotNull(predicate);
+		return only(Predicates.not(predicate));
 	}
 
 	/**
 	 * TODO.
 	 *
-	 * @return TODO.
+	 * @return a filtered {@code ListMaker}
 	 */
 	public ListMaker<T> exclude(T... valuesToExclude) {
 		checkNotNull(valuesToExclude);
@@ -131,7 +133,7 @@ public class ListMaker<T> implements Iterable<T> {
 	/**
 	 * TODO.
 	 *
-	 * @return TODO.
+	 * @return a filtered {@code ListMaker}
 	 */
 	public ListMaker<T> exclude(Collection<? extends T> valuesToExclude) {
 		checkNotNull(valuesToExclude);
@@ -139,41 +141,49 @@ public class ListMaker<T> implements Iterable<T> {
 	}
 
 	/**
-	 * TODO.
+	 * Returns the first element in the {@code ListMaker}.
 	 *
-	 * @return TODO.
+	 * @return the first element in the {@code ListMaker}
+	 * @throws NoSuchElementException if the {@code ListMaker} is empty
 	 */
 	public T first() {
 		return values.iterator().next();
 	}
 
 	/**
-	 * TODO.
+	 * Returns the first element in the {@code ListMaker} that satisfies the given {@code predicate}.
 	 *
-	 * @return TODO.
+	 * @param predicate the predicate to satisfy
+	 * @return the first element in the {@code ListMaker} that satisfies the {@code predicate}
+	 * @throws NoSuchElementException if no element satisfies the {@code predicate}
 	 */
-	public T first(Predicate<? super T> condition) {
-		checkNotNull(condition);
-		return Iterables.find(values, condition);
+	public T first(Predicate<? super T> predicate) {
+		checkNotNull(predicate);
+		return Iterables.find(values, predicate);
 	}
 
 	/**
-	 * TODO.
+	 * Returns the first element in the {@code ListMaker} or {@code defaultValue}
+	 * if the {@code ListMaker} is empty.
 	 *
-	 * @return TODO.
+	 * @param defaultValue the default value to return if the {@code ListMaker} is empty
+	 * @return the first element in the {@code ListMaker} or the default value
 	 */
 	public T firstOrDefault(@Nullable T defaultValue) {
 		return Iterables.getFirst(values, defaultValue);
 	}
 
 	/**
-	 * TODO.
+	 * Returns the first element in the {@code ListMaker} that satisfies the given {@code predicate}
+	 * or {@code defaultValue} if no element satisfies the {@code predicate}.
 	 *
-	 * @return TODO.
+	 * @param predicate    the predicate to satisfy
+	 * @param defaultValue the default value to return if no element satisfies the {@code predicate}
+	 * @return the first element in the {@code ListMaker} that satisfies the {@code predicate} or the default value
 	 */
-	public T firstOrDefault(Predicate<? super T> condition, @Nullable T defaultValue) {
-		checkNotNull(condition);
-		return Iterables.find(values, condition, defaultValue);
+	public T firstOrDefault(Predicate<? super T> predicate, @Nullable T defaultValue) {
+		checkNotNull(predicate);
+		return Iterables.find(values, predicate, defaultValue);
 	}
 
 	/**
@@ -181,9 +191,9 @@ public class ListMaker<T> implements Iterable<T> {
 	 *
 	 * @return TODO.
 	 */
-	public boolean contains(Predicate<? super T> condition) {
-		checkNotNull(condition);
-		return Iterables.any(values, condition);
+	public boolean contains(Predicate<? super T> predicate) {
+		checkNotNull(predicate);
+		return Iterables.any(values, predicate);
 	}
 
 	/**
@@ -191,9 +201,9 @@ public class ListMaker<T> implements Iterable<T> {
 	 *
 	 * @return TODO.
 	 */
-	public int count(Predicate<? super T> condition) {
-		checkNotNull(condition);
-		return Iterables.size(Iterables.filter(values, condition));
+	public int count(Predicate<? super T> predicate) {
+		checkNotNull(predicate);
+		return Iterables.size(Iterables.filter(values, predicate));
 	}
 
 	/**
@@ -454,9 +464,9 @@ public class ListMaker<T> implements Iterable<T> {
 	}
 
 	/**
-	 * TODO.
+	 * Returns an iterator over a set of elements of type T.
 	 *
-	 * @return TODO.
+	 * @return an {@link Iterator}
 	 */
 	@Override
 	public Iterator<T> iterator() {
