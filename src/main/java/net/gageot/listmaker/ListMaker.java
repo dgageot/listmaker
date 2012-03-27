@@ -49,7 +49,7 @@ public final class ListMaker<T> implements Iterable<T> {
 	 * <b>Note:</b> Trying to create a {@code ListMaker} from another
 	 * {@code ListMaker} returns the original {@code ListMaker}.
 	 *
-	 * @return a new {@code ListMaker} or the {@code ListMaker} passed as {@code values)
+	 * @return a new {@code ListMaker} or the {@code ListMaker} passed as {@code values}
 	 */
 	public static <T> ListMaker<T> with(Iterable<T> values) {
 		checkNotNull(values);
@@ -101,7 +101,7 @@ public final class ListMaker<T> implements Iterable<T> {
 	}
 
     /**
-	 * Returns a filtered {@code ListMaker} that keeps only the elements that satisfy a {@code predicate).
+	 * Returns a filtered {@code ListMaker} that keeps only the elements that satisfy a {@code predicate}.
 	 *
      * @param predicate the predicate to satisfy to be included
      * @return a filtered {@code ListMaker}
@@ -112,7 +112,7 @@ public final class ListMaker<T> implements Iterable<T> {
 	}
 
     /**
-     * Returns a filtered {@code ListMaker} that exclude the elements that satisfy a {@code predicate).
+     * Returns a filtered {@code ListMaker} that exclude the elements that satisfy a {@code predicate}.
      *
      * @param predicate the predicate to satisfy to be excluded
      * @return a filtered {@code ListMaker}
@@ -123,7 +123,7 @@ public final class ListMaker<T> implements Iterable<T> {
 	}
 
     /**
-     * Returns a filtered {@code ListMaker} that excludes given {@code values).
+     * Returns a filtered {@code ListMaker} that excludes given {@code values}.
      *
      * @param values the values to exclude
      * @return a filtered {@code ListMaker}
@@ -134,7 +134,7 @@ public final class ListMaker<T> implements Iterable<T> {
 	}
 
     /**
-     * Returns a filtered {@code ListMaker} that excludes given collection of {@code values).
+     * Returns a filtered {@code ListMaker} that excludes given collection of {@code values}.
      *
      * @param values the collection of values to exclude
      * @return a filtered {@code ListMaker}
@@ -241,7 +241,7 @@ public final class ListMaker<T> implements Iterable<T> {
 	}
 
     /**
-     * Returns a filtered {@code ListMaker} that excludes {@code null) values.
+     * Returns a filtered {@code ListMaker} that excludes {@code null} values.
      *
      * @return a filtered {@code ListMaker}
      */
