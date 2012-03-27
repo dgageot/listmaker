@@ -100,44 +100,48 @@ public final class ListMaker<T> implements Iterable<T> {
 		return where(transform, Predicates.equalTo(valueToCompareWith));
 	}
 
-	/**
-	 * TODO.
+    /**
+	 * Returns a filtered {@code ListMaker} that keeps only the elements that satisfy a {@code predicate).
 	 *
-	 * @return a filtered {@code ListMaker}
+     * @param predicate the predicate to satisfy to be included
+     * @return a filtered {@code ListMaker}
 	 */
 	public ListMaker<T> only(Predicate<? super T> predicate) {
 		checkNotNull(predicate);
 		return new ListMaker<T>(Iterables.filter(values, predicate));
 	}
 
-	/**
-	 * TODO.
-	 *
-	 * @return a filtered {@code ListMaker}
-	 */
-	public ListMaker<T> exclude(Predicate<? super T> predicate) {
+    /**
+     * Returns a filtered {@code ListMaker} that exclude the elements that satisfy a {@code predicate).
+     *
+     * @param predicate the predicate to satisfy to be excluded
+     * @return a filtered {@code ListMaker}
+     */
+    public ListMaker<T> exclude(Predicate<? super T> predicate) {
 		checkNotNull(predicate);
 		return only(Predicates.not(predicate));
 	}
 
-	/**
-	 * TODO.
-	 *
-	 * @return a filtered {@code ListMaker}
-	 */
-	public ListMaker<T> exclude(T... valuesToExclude) {
-		checkNotNull(valuesToExclude);
-		return exclude(Arrays.asList(valuesToExclude));
+    /**
+     * Returns a filtered {@code ListMaker} that excludes given {@code values).
+     *
+     * @param values the values to exclude
+     * @return a filtered {@code ListMaker}
+     */
+    public ListMaker<T> exclude(T... values) {
+		checkNotNull(values);
+		return exclude(Arrays.asList(values));
 	}
 
-	/**
-	 * TODO.
-	 *
-	 * @return a filtered {@code ListMaker}
-	 */
-	public ListMaker<T> exclude(Collection<? extends T> valuesToExclude) {
-		checkNotNull(valuesToExclude);
-		return exclude(Predicates.in(valuesToExclude));
+    /**
+     * Returns a filtered {@code ListMaker} that excludes given collection of {@code values).
+     *
+     * @param values the collection of values to exclude
+     * @return a filtered {@code ListMaker}
+     */
+    public ListMaker<T> exclude(Collection<? extends T> values) {
+		checkNotNull(values);
+		return exclude(Predicates.in(values));
 	}
 
 	/**
@@ -196,12 +200,13 @@ public final class ListMaker<T> implements Iterable<T> {
 		return Iterables.any(values, predicate);
 	}
 
-	/**
-	 * TODO.
-	 *
-	 * @return TODO.
-	 */
-	public int count(Predicate<? super T> predicate) {
+    /**
+     * Returns the number of elements in the {@code ListMaker} that satisfies the given {@code predicate}.
+     *
+     * @param predicate    the predicate to satisfy
+     * @return the number of elements in the {@code ListMaker} that satisfies the {@code predicate}
+     */
+    public int count(Predicate<? super T> predicate) {
 		checkNotNull(predicate);
 		return Iterables.size(Iterables.filter(values, predicate));
 	}
@@ -235,12 +240,12 @@ public final class ListMaker<T> implements Iterable<T> {
 		return sortOn(Ordering.natural().onResultOf(transform));
 	}
 
-	/**
-	 * TODO.
-	 *
-	 * @return TODO.
-	 */
-	public ListMaker<T> notNulls() {
+    /**
+     * Returns a filtered {@code ListMaker} that excludes {@code null) values.
+     *
+     * @return a filtered {@code ListMaker}
+     */
+    public ListMaker<T> notNulls() {
 		return only(Predicates.<T>notNull());
 	}
 
@@ -429,21 +434,22 @@ public final class ListMaker<T> implements Iterable<T> {
 		return ImmutableSet.copyOf(Iterables.transform(values, transform));
 	}
 
-	/**
-	 * TODO.
-	 *
-	 * @return TODO.
-	 */
-	public T getLast() {
+    /**
+     * Returns the last element of the {@code ListMaker}.
+     *
+     * @return the last element of the {@code ListMaker}
+     * @throws NoSuchElementException if the {@code ListMaker} is empty
+     */
+    public T getLast() {
 		return Iterables.getLast(values);
 	}
 
-	/**
-	 * TODO.
-	 *
-	 * @return TODO.
-	 */
-	public int size() {
+    /**
+     * Returns the number of elements in the {@code ListMaker}.
+     *
+     * @return the number of elements
+     */
+    public int size() {
 		return Iterables.size(values);
 	}
 
@@ -502,12 +508,13 @@ public final class ListMaker<T> implements Iterable<T> {
 		return values.hashCode();
 	}
 
-	/**
-	 * TODO.
-	 *
-	 * @return TODO.
-	 */
-	@Override
+    /**
+     * Returns a string representation of the {@code ListMaker} elements, with the format
+     * {@code [e1, e2, ..., en]}.
+     *
+     * @return a string representation of the {@code ListMaker} elements
+     */
+    @Override
 	public String toString() {
 		return values.toString();
 	}
