@@ -474,7 +474,6 @@ public final class ListMaker<T> implements Iterable<T> {
 	 *
 	 * @return an {@link Iterator}
 	 */
-	@Override
 	public Iterator<T> iterator() {
 		return values.iterator();
 	}
