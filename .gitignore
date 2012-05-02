@@ -4,3 +4,6 @@ target/
 .privatebuild/
 pom.xml.releaseBackup
 release.properties
+.classpath
+.project
+.settings/
