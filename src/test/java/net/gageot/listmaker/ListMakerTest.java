@@ -24,6 +24,7 @@ import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Ordering;
 import org.fest.assertions.Assertions;
 import org.fest.assertions.BooleanAssert;
@@ -33,6 +34,7 @@ import org.fest.assertions.ObjectArrayAssert;
 import org.fest.assertions.ObjectAssert;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -368,6 +370,16 @@ public class ListMakerTest {
         .includes(entry(1, "1")) //
         .includes(entry(2, "22")) //
         .includes(entry(3, "333"));
+  }
+
+  @Test
+  public void canGroupBy() {
+    ListMultimap<Integer, String> byLength = with("1", "22", "333", "444").groupBy(TO_LENGTH);
+
+    assertThat(byLength.asMap()) //
+        .includes(entry(1, Arrays.asList("1"))) //
+        .includes(entry(2, Arrays.asList("22"))) //
+        .includes(entry(3, Arrays.asList("333", "444")));
   }
 
   @Test

@@ -23,9 +23,11 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
@@ -451,6 +453,22 @@ public final class ListMaker<T> implements Iterable<T> {
   public <R> ImmutableSet<R> toImmutableSet(Function<? super T, R> transform) {
     checkNotNull(transform);
     return ImmutableSet.copyOf(Iterables.transform(values, transform));
+  }
+
+  /**
+   * TODO.
+   *
+   * @return TODO.
+   */
+  public <K> ListMultimap<K, T> groupBy(Function<? super T, K> toKey) {
+    checkNotNull(toKey);
+    ListMultimap<K, T> map = ArrayListMultimap.create();
+
+    for (T value : values) {
+      map.put(toKey.apply(value), value);
+    }
+
+    return map;
   }
 
   /**
