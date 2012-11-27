@@ -46,7 +46,6 @@ import static com.google.common.base.Functions.toStringFunction;
 import static com.google.common.base.Predicates.alwaysTrue;
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.in;
-import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
 import static net.gageot.listmaker.ListMaker.where;
 import static net.gageot.listmaker.ListMaker.whereEquals;
@@ -158,14 +157,21 @@ public class ListMakerTest {
     assertThat(treeSet).containsExactly("3", "2", "1");
   }
 
-  @Test
-  public void canJoinValues() {
-    String joined = with("A", "B", "C").join(":");
+	@Test
+	public void canJoinValues() {
+		String joined = with("A", "B", "C").join();
 
-    assertThat(joined).isEqualTo("A:B:C");
-  }
+		assertThat(joined).isEqualTo("ABC");
+	}
 
-  @Test
+	@Test
+	public void canJoinValuesWithSeparator() {
+		String joined = with("A", "B", "C").join(":");
+
+		assertThat(joined).isEqualTo("A:B:C");
+	}
+
+	@Test
   public void canKeepValuesBasedOnPredicate() {
     ListMaker<String> filtered = with("A", "B", "C").only(equalTo("B"));
 
@@ -392,14 +398,24 @@ public class ListMakerTest {
     assertThat(values).containsExactly("1", "2", "3", "4", "5");
   }
 
-  @Test
-  public void canCheckEmptiness() {
-    assertThat(with(newArrayList("1", "2", "1")).isEmpty()).isFalse();
-    assertThat(with(newArrayList("1")).isEmpty()).isFalse();
-    assertThat(with(newArrayList()).isEmpty()).isTrue();
-  }
+	@Test
+	public void canCheckEmptiness() {
+		assertThat(with("1", "2", "1").isEmpty()).isFalse();
+		assertThat(with("1").isEmpty()).isFalse();
+		assertThat(with().isEmpty()).isTrue();
+	}
 
-  private static <T> ListAssert assertThat(Iterable<T> actual) {
+	@Test
+	public void canConcatenate() {
+		ListMaker<String> head = with("a", "b", "c");
+		ListMaker<String> tail = with("d", "e");
+
+		ListMaker<String> concat = head.concat(tail);
+
+		assertThat(concat).containsExactly("a", "b", "c", "d", "e");
+	}
+
+	private static <T> ListAssert assertThat(Iterable<T> actual) {
     return Assertions.assertThat(ImmutableList.copyOf(actual));
   }
 
