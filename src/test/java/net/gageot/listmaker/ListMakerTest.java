@@ -406,11 +406,15 @@ public class ListMakerTest {
 	}
 
 	@Test
-	public void canConcatenate() {
-		ListMaker<String> head = with("a", "b", "c");
-		ListMaker<String> tail = with("d", "e");
+	public void canConcatenateIterable() {
+		ListMaker<String> concat = with("a", "b", "c").concat(asList("d", "e"));
 
-		ListMaker<String> concat = head.concat(tail);
+		assertThat(concat).containsExactly("a", "b", "c", "d", "e");
+	}
+
+	@Test
+	public void canConcatenateValues() {
+		ListMaker<String> concat = with("a", "b", "c").concat("d", "e");
 
 		assertThat(concat).containsExactly("a", "b", "c", "d", "e");
 	}

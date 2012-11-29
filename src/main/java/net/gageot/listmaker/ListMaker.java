@@ -419,6 +419,16 @@ public final class ListMaker<T> implements Iterable<T> {
 	 * TODO.
 	 *
 	 * @return TODO.
+	 * @since 1.1
+	 */
+	public ListMaker<T> concat(T... tail) {
+		return with(Iterables.concat(this, Arrays.asList(tail)));
+	}
+
+	/**
+	 * TODO.
+	 *
+	 * @return TODO.
 	 */
 	public T max(Ordering<? super T> ordering) {
 		return ordering.max(values);
