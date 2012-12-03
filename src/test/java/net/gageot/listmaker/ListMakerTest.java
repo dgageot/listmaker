@@ -419,6 +419,24 @@ public class ListMakerTest {
 		assertThat(concat).containsExactly("a", "b", "c", "d", "e");
 	}
 
+	@Test
+	public void canReduce() {
+		int sum = with(1, 2, 3, 4).reduce(0, new Accumulator<Integer, Integer>() {
+			public Integer apply(Integer accumulator, Integer value) {
+				return accumulator + value;
+			}
+		});
+
+		assertThat(sum).isEqualTo(10);
+	}
+
+	@Test
+	public void canSum() {
+		int sum = with(1, 2, 3, 4).reduce(0, Accumulator.SUM);
+
+		assertThat(sum).isEqualTo(10);
+	}
+
 	private static <T> ListAssert assertThat(Iterable<T> actual) {
     return Assertions.assertThat(ImmutableList.copyOf(actual));
   }

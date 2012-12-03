@@ -458,6 +458,22 @@ public final class ListMaker<T> implements Iterable<T> {
 	 *
 	 * @return TODO.
 	 */
+	public <V> V reduce(V initialValue, Accumulator<V, T> operator) {
+		checkNotNull(operator);
+
+		V accumulator = initialValue;
+		for (T value : this) {
+			accumulator = operator.apply(accumulator, value);
+		}
+
+		return accumulator;
+	}
+
+	/**
+	 * TODO.
+	 *
+	 * @return TODO.
+	 */
 	public <V extends Comparable<V>> T minOnResultOf(Function<? super T, V> transform) {
 		checkNotNull(transform);
 		return Ordering.natural().onResultOf(transform).min(values);
