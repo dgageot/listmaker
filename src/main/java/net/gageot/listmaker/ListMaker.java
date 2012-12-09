@@ -1,66 +1,36 @@
 /*
  * This file is part of ListMaker.
- *
- * Copyright (C) 2012
- * "David Gageot" <david@gageot.net>,
- *
- * ListMaker is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * ListMaker is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with ListMaker. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2012 "David Gageot" <david@gageot.net>,
+ * 
+ * ListMaker is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * ListMaker is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * ListMaker. If not, see <http://www.gnu.org/licenses/>.
  */
 package net.gageot.listmaker;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets;
-import com.google.common.primitives.Booleans;
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Chars;
-import com.google.common.primitives.Doubles;
-import com.google.common.primitives.Floats;
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Longs;
-import com.google.common.primitives.Shorts;
-
+import static com.google.common.base.Preconditions.*;
+import java.util.*;
 import javax.annotation.Nullable;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.TreeSet;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.*;
+import com.google.common.collect.*;
+import com.google.common.primitives.*;
 
 /**
- * ListMaker is a fluent interface list maker for use with Guava.<br/> It makes it easy to start from an {@link
- * Iterable} and apply transformations, filtering and operations on it. Any of these can be combined.
- *
- * @param <T> the type of elements returned by the iterator.
+ * ListMaker is a fluent interface list maker for use with Guava.<br/>
+ * It makes it easy to start from an {@link Iterable} and apply transformations,
+ * filtering and operations on it. Any of these can be combined.
+ * 
+ * @param <T>
+ *            the type of elements returned by the iterator.
  * @author David Gageot
  * @since 1.0
  */
@@ -77,8 +47,9 @@ public final class ListMaker<T> implements Iterable<T> {
 	 * <p/>
 	 * <b>Note:</b> Trying to create a {@code ListMaker} from another
 	 * {@code ListMaker} returns the original {@code ListMaker}.
-	 *
-	 * @return a new {@code ListMaker} or the {@code ListMaker} passed as {@code values}
+	 * 
+	 * @return a new {@code ListMaker} or the {@code ListMaker} passed as
+	 *         {@code values}
 	 */
 	public static <T> ListMaker<T> with(Iterable<T> values) {
 		checkNotNull(values);
@@ -90,17 +61,16 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * Creates an empty {@code ListMaker}.
-	 *
+	 * 
 	 * @return an empty {@code ListMaker}
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> ListMaker<T> with() {
-		return new ListMaker<T>(Collections.<T>emptyList());
+		return new ListMaker<T>(Collections.<T> emptyList());
 	}
 
 	/**
 	 * Creates a {@code ListMaker} from a list of values.
-	 *
+	 * 
 	 * @return a new {@code ListMaker}
 	 */
 	public static <T> ListMaker<T> with(T... values) {
@@ -110,7 +80,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * Creates a {@code ListMaker} from a list of ints.
-	 *
+	 * 
 	 * @return a new {@code ListMaker}
 	 * @since 1.1
 	 */
@@ -121,7 +91,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * Creates a {@code ListMaker} from a list of chars.
-	 *
+	 * 
 	 * @return a new {@code ListMaker}
 	 * @since 1.1
 	 */
@@ -132,7 +102,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * Creates a {@code ListMaker} from a list of booleans.
-	 *
+	 * 
 	 * @return a new {@code ListMaker}
 	 * @since 1.1
 	 */
@@ -143,7 +113,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * Creates a {@code ListMaker} from a list of longs.
-	 *
+	 * 
 	 * @return a new {@code ListMaker}
 	 * @since 1.1
 	 */
@@ -154,7 +124,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * Creates a {@code ListMaker} from a list of floats.
-	 *
+	 * 
 	 * @return a new {@code ListMaker}
 	 * @since 1.1
 	 */
@@ -165,7 +135,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * Creates a {@code ListMaker} from a list of doubles.
-	 *
+	 * 
 	 * @return a new {@code ListMaker}
 	 * @since 1.1
 	 */
@@ -176,7 +146,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * Creates a {@code ListMaker} from a list of bytes.
-	 *
+	 * 
 	 * @return a new {@code ListMaker}
 	 * @since 1.1
 	 */
@@ -187,7 +157,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * Creates a {@code ListMaker} from a list of shorts.
-	 *
+	 * 
 	 * @return a new {@code ListMaker}
 	 * @since 1.1
 	 */
@@ -198,7 +168,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public static <V, T> Predicate<? super T> where(Function<? super T, ? extends V> transform, Predicate<? super V> predicate) {
@@ -209,7 +179,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public static <V, T> Predicate<? super T> whereEquals(Function<? super T, ? extends V> transform, @Nullable V valueToCompareWith) {
@@ -218,9 +188,11 @@ public final class ListMaker<T> implements Iterable<T> {
 	}
 
 	/**
-	 * Returns a filtered {@code ListMaker} that keeps only the elements that satisfy a {@code predicate}.
-	 *
-	 * @param predicate the predicate to satisfy to be included
+	 * Returns a filtered {@code ListMaker} that keeps only the elements that
+	 * satisfy a {@code predicate}.
+	 * 
+	 * @param predicate
+	 *            the predicate to satisfy to be included
 	 * @return a filtered {@code ListMaker}
 	 */
 	public ListMaker<T> only(Predicate<? super T> predicate) {
@@ -228,9 +200,11 @@ public final class ListMaker<T> implements Iterable<T> {
 	}
 
 	/**
-	 * Returns a filtered {@code ListMaker} that keeps only the elements that satisfy a {@code predicate}.
-	 *
-	 * @param predicate the predicate to satisfy to be included
+	 * Returns a filtered {@code ListMaker} that keeps only the elements that
+	 * satisfy a {@code predicate}.
+	 * 
+	 * @param predicate
+	 *            the predicate to satisfy to be included
 	 * @return a filtered {@code ListMaker}
 	 */
 	public ListMaker<T> filter(Predicate<? super T> predicate) {
@@ -239,9 +213,11 @@ public final class ListMaker<T> implements Iterable<T> {
 	}
 
 	/**
-	 * Returns a filtered {@code ListMaker} that exclude the elements that satisfy a {@code predicate}.
-	 *
-	 * @param predicate the predicate to satisfy to be excluded
+	 * Returns a filtered {@code ListMaker} that exclude the elements that
+	 * satisfy a {@code predicate}.
+	 * 
+	 * @param predicate
+	 *            the predicate to satisfy to be excluded
 	 * @return a filtered {@code ListMaker}
 	 */
 	public ListMaker<T> exclude(Predicate<? super T> predicate) {
@@ -251,42 +227,50 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * Returns a filtered {@code ListMaker} that excludes given {@code values}.
-	 *
-	 * @param values the values to exclude
+	 * 
+	 * @param valuesToExclude
+	 *            the values to exclude
 	 * @return a filtered {@code ListMaker}
 	 */
-	public ListMaker<T> exclude(T... values) {
-		checkNotNull(values);
-		return exclude(Arrays.asList(values));
+	public ListMaker<T> exclude(T... valuesToExclude) {
+		checkNotNull(valuesToExclude);
+		return exclude(Arrays.asList(valuesToExclude));
 	}
 
 	/**
-	 * Returns a filtered {@code ListMaker} that excludes given collection of {@code values}.
-	 *
-	 * @param values the collection of values to exclude
+	 * Returns a filtered {@code ListMaker} that excludes given collection of
+	 * {@code values}.
+	 * 
+	 * @param valuesToExclude
+	 *            the collection of values to exclude
 	 * @return a filtered {@code ListMaker}
 	 */
-	public ListMaker<T> exclude(Collection<? extends T> values) {
-		checkNotNull(values);
-		return exclude(Predicates.in(values));
+	public ListMaker<T> exclude(Collection<? extends T> valuesToExclude) {
+		checkNotNull(valuesToExclude);
+		return exclude(Predicates.in(valuesToExclude));
 	}
 
 	/**
 	 * Returns the first element in the {@code ListMaker}.
-	 *
+	 * 
 	 * @return the first element in the {@code ListMaker}
-	 * @throws NoSuchElementException if the {@code ListMaker} is empty
+	 * @throws NoSuchElementException
+	 *             if the {@code ListMaker} is empty
 	 */
 	public T first() {
 		return values.iterator().next();
 	}
 
 	/**
-	 * Returns the first element in the {@code ListMaker} that satisfies the given {@code predicate}.
-	 *
-	 * @param predicate the predicate to satisfy
-	 * @return the first element in the {@code ListMaker} that satisfies the {@code predicate}
-	 * @throws NoSuchElementException if no element satisfies the {@code predicate}
+	 * Returns the first element in the {@code ListMaker} that satisfies the
+	 * given {@code predicate}.
+	 * 
+	 * @param predicate
+	 *            the predicate to satisfy
+	 * @return the first element in the {@code ListMaker} that satisfies the
+	 *         {@code predicate}
+	 * @throws NoSuchElementException
+	 *             if no element satisfies the {@code predicate}
 	 */
 	public T first(Predicate<? super T> predicate) {
 		checkNotNull(predicate);
@@ -294,10 +278,11 @@ public final class ListMaker<T> implements Iterable<T> {
 	}
 
 	/**
-	 * Returns the first element in the {@code ListMaker} or {@code defaultValue}
-	 * if the {@code ListMaker} is empty.
-	 *
-	 * @param defaultValue the default value to return if the {@code ListMaker} is empty
+	 * Returns the first element in the {@code ListMaker} or
+	 * {@code defaultValue} if the {@code ListMaker} is empty.
+	 * 
+	 * @param defaultValue
+	 *            the default value to return if the {@code ListMaker} is empty
 	 * @return the first element in the {@code ListMaker} or the default value
 	 */
 	public T firstOrDefault(@Nullable T defaultValue) {
@@ -305,12 +290,17 @@ public final class ListMaker<T> implements Iterable<T> {
 	}
 
 	/**
-	 * Returns the first element in the {@code ListMaker} that satisfies the given {@code predicate}
-	 * or {@code defaultValue} if no element satisfies the {@code predicate}.
-	 *
-	 * @param predicate    the predicate to satisfy
-	 * @param defaultValue the default value to return if no element satisfies the {@code predicate}
-	 * @return the first element in the {@code ListMaker} that satisfies the {@code predicate} or the default value
+	 * Returns the first element in the {@code ListMaker} that satisfies the
+	 * given {@code predicate} or {@code defaultValue} if no element satisfies
+	 * the {@code predicate}.
+	 * 
+	 * @param predicate
+	 *            the predicate to satisfy
+	 * @param defaultValue
+	 *            the default value to return if no element satisfies the
+	 *            {@code predicate}
+	 * @return the first element in the {@code ListMaker} that satisfies the
+	 *         {@code predicate} or the default value
 	 */
 	public T firstOrDefault(Predicate<? super T> predicate, @Nullable T defaultValue) {
 		checkNotNull(predicate);
@@ -319,7 +309,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public boolean contains(Predicate<? super T> predicate) {
@@ -328,10 +318,13 @@ public final class ListMaker<T> implements Iterable<T> {
 	}
 
 	/**
-	 * Returns the number of elements in the {@code ListMaker} that satisfies the given {@code predicate}.
-	 *
-	 * @param predicate the predicate to satisfy
-	 * @return the number of elements in the {@code ListMaker} that satisfies the {@code predicate}
+	 * Returns the number of elements in the {@code ListMaker} that satisfies
+	 * the given {@code predicate}.
+	 * 
+	 * @param predicate
+	 *            the predicate to satisfy
+	 * @return the number of elements in the {@code ListMaker} that satisfies
+	 *         the {@code predicate}
 	 */
 	public int count(Predicate<? super T> predicate) {
 		checkNotNull(predicate);
@@ -340,7 +333,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public ListMaker<T> sortOn(Ordering<? super T> ordering) {
@@ -349,7 +342,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public ListMaker<T> sortOn(Comparator<? super T> comparator) {
@@ -359,7 +352,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public ListMaker<T> sortOn(Function<? super T, ? extends Comparable<?>> transform) {
@@ -369,16 +362,16 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * Returns a filtered {@code ListMaker} that excludes {@code null} values.
-	 *
+	 * 
 	 * @return a filtered {@code ListMaker}
 	 */
 	public ListMaker<T> notNulls() {
-		return only(Predicates.<T>notNull());
+		return only(Predicates.<T> notNull());
 	}
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public <R> ListMaker<R> to(Function<? super T, R> transform) {
@@ -387,7 +380,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public <R> ListMaker<R> map(Function<? super T, R> transform) {
@@ -397,7 +390,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public <R, C extends Iterable<R>> ListMaker<R> flatMap(Function<? super T, C> transform) {
@@ -407,7 +400,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 * @since 1.1
 	 */
@@ -417,7 +410,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 * @since 1.1
 	 */
@@ -427,7 +420,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public T max(Ordering<? super T> ordering) {
@@ -436,7 +429,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public T min(Ordering<? super T> ordering) {
@@ -445,7 +438,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public <V extends Comparable<V>> T maxOnResultOf(Function<? super T, V> transform) {
@@ -455,7 +448,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public <V> V reduce(V initialValue, Accumulator<V, T> operator) {
@@ -471,7 +464,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public <V extends Comparable<V>> T minOnResultOf(Function<? super T, V> transform) {
@@ -481,7 +474,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public <C extends Collection<T>> C copyTo(C destination) {
@@ -492,7 +485,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public List<T> toList() {
@@ -501,7 +494,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public ImmutableList<T> toImmutableList() {
@@ -510,7 +503,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public String join(@Nullable String separator) {
@@ -519,7 +512,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 * @since 1.1
 	 */
@@ -529,7 +522,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public T[] toArray(Class<T> type) {
@@ -539,7 +532,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public Set<T> toSet() {
@@ -548,7 +541,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public <R> Set<R> toSet(Function<? super T, R> transform) {
@@ -558,7 +551,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public TreeSet<T> toTreeSet() {
@@ -567,7 +560,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public TreeSet<T> toTreeSet(Comparator<? super T> comparator) {
@@ -577,7 +570,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public <R> TreeSet<R> toTreeSet(Function<? super T, R> transform, Comparator<? super R> ordering) {
@@ -589,7 +582,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public <R extends Comparable<R>> TreeSet<R> toTreeSet(Function<? super T, R> transform) {
@@ -599,7 +592,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public ImmutableSet<T> toImmutableSet() {
@@ -608,7 +601,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public <R> ImmutableSet<R> toImmutableSet(Function<? super T, R> transform) {
@@ -618,7 +611,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public <K> ListMultimap<K, T> groupBy(Function<? super T, K> toKey) {
@@ -634,9 +627,10 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * Returns the last element of the {@code ListMaker}.
-	 *
+	 * 
 	 * @return the last element of the {@code ListMaker}
-	 * @throws NoSuchElementException if the {@code ListMaker} is empty
+	 * @throws NoSuchElementException
+	 *             if the {@code ListMaker} is empty
 	 */
 	public T getLast() {
 		return Iterables.getLast(values);
@@ -644,7 +638,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * Returns the number of elements in the {@code ListMaker}.
-	 *
+	 * 
 	 * @return the number of elements
 	 */
 	public int size() {
@@ -653,7 +647,7 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public <K> Map<K, T> indexBy(Function<? super T, ? extends K> toKey) {
@@ -669,16 +663,17 @@ public final class ListMaker<T> implements Iterable<T> {
 
 	/**
 	 * Returns an iterator over a set of elements of type T.
-	 *
+	 * 
 	 * @return an {@link Iterator}
 	 */
+	@Override
 	public Iterator<T> iterator() {
 		return values.iterator();
 	}
 
 	/**
 	 * TODO.
-	 *
+	 * 
 	 * @return TODO.
 	 */
 	public boolean isEmpty() {
@@ -686,18 +681,37 @@ public final class ListMaker<T> implements Iterable<T> {
 	}
 
 	/**
-	 * TODO.
-	 *
-	 * @return TODO.
+	 * Execute the given {@code action} on each element of type T.
 	 */
-	@Override
-	public boolean equals(Object o) {
-		return this == o || o instanceof Iterable<?> && Iterables.elementsEqual(this, (Iterable<?>) o);
+	public void forEach(Action<? super T> action) {
+		for (T value : values) {
+			action.execute(value);
+		}
+	}
+
+	/**
+	 * Execute the given {@code action} on each element of type T.
+	 */
+	public void forEach(ActionWithIndex<? super T> action) {
+		int index = 0;
+		for (T value : values) {
+			action.execute(index++, value);
+		}
 	}
 
 	/**
 	 * TODO.
-	 *
+	 * 
+	 * @return TODO.
+	 */
+	@Override
+	public boolean equals(Object o) {
+		return (this == o) || ((o instanceof Iterable<?>) && Iterables.elementsEqual(this, (Iterable<?>) o));
+	}
+
+	/**
+	 * TODO.
+	 * 
 	 * @return TODO.
 	 */
 	@Override
@@ -706,9 +720,9 @@ public final class ListMaker<T> implements Iterable<T> {
 	}
 
 	/**
-	 * Returns a string representation of the {@code ListMaker} elements, with the format
-	 * {@code [e1, e2, ..., en]}.
-	 *
+	 * Returns a string representation of the {@code ListMaker} elements, with
+	 * the format {@code [e1, e2, ..., en]}.
+	 * 
 	 * @return a string representation of the {@code ListMaker} elements
 	 */
 	@Override
