@@ -484,18 +484,20 @@ public final class ListMaker<T> implements Iterable<T> {
 	}
 
 	/**
-	 * TODO.
+	 * Returns a new {@code ArrayList} that contains all the values in the
+	 * {@code ListMaker}.
 	 * 
-	 * @return TODO.
+	 * @return the list
 	 */
-	public List<T> toList() {
+	public ArrayList<T> toList() {
 		return Lists.newArrayList(values);
 	}
 
 	/**
-	 * TODO.
+	 * Returns a new {@code ImmutableList} that contains all the values in the
+	 * {@code ListMaker}.
 	 * 
-	 * @return TODO.
+	 * @return the list
 	 */
 	public ImmutableList<T> toImmutableList() {
 		return ImmutableList.copyOf(values);
@@ -531,11 +533,12 @@ public final class ListMaker<T> implements Iterable<T> {
 	}
 
 	/**
-	 * TODO.
+	 * Returns a new {@code HashSet} that contains all the values in the
+	 * {@code ListMaker}.
 	 * 
-	 * @return TODO.
+	 * @return the set
 	 */
-	public Set<T> toSet() {
+	public HashSet<T> toSet() {
 		return Sets.newHashSet(values);
 	}
 
@@ -550,9 +553,10 @@ public final class ListMaker<T> implements Iterable<T> {
 	}
 
 	/**
-	 * TODO.
+	 * Returns a new {@code TreeSet} that contains all the values in the
+	 * {@code ListMaker}.
 	 * 
-	 * @return TODO.
+	 * @return the set
 	 */
 	public TreeSet<T> toTreeSet() {
 		return copyTo(new TreeSet<T>());
@@ -591,9 +595,10 @@ public final class ListMaker<T> implements Iterable<T> {
 	}
 
 	/**
-	 * TODO.
+	 * Returns a new {@code ImmutableSet} that contains all the values in the
+	 * {@code ListMaker}.
 	 * 
-	 * @return TODO.
+	 * @return the set
 	 */
 	public ImmutableSet<T> toImmutableSet() {
 		return ImmutableSet.copyOf(values);
@@ -672,9 +677,9 @@ public final class ListMaker<T> implements Iterable<T> {
 	}
 
 	/**
-	 * TODO.
+	 * Returns {@code true} if the {@code ListMaker} contains no value.
 	 * 
-	 * @return TODO.
+	 * @return {@code true} if the {@code ListMaker} is empty
 	 */
 	public boolean isEmpty() {
 		return Iterables.isEmpty(values);
