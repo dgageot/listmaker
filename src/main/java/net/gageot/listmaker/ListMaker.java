@@ -27,7 +27,7 @@ import com.google.common.primitives.*;
 /**
  * ListMaker is a fluent interface list maker for use with Guava.<br/>
  * It makes it easy to start from an {@link Iterable} and apply transformations,
- * filtering and operations on it. Any of these can be combined.
+ * filtering and operations on it. Most of these can be combined.
  * 
  * @param <T>
  *            the type of elements returned by the iterator.
@@ -337,6 +337,7 @@ public final class ListMaker<T> implements Iterable<T> {
 	 * @return TODO.
 	 */
 	public ListMaker<T> sortOn(Ordering<? super T> ordering) {
+		checkNotNull(ordering);
 		return new ListMaker<T>(ordering.sortedCopy(values));
 	}
 
@@ -405,6 +406,7 @@ public final class ListMaker<T> implements Iterable<T> {
 	 * @since 1.1
 	 */
 	public ListMaker<T> concat(Iterable<T> tail) {
+		checkNotNull(tail);
 		return with(Iterables.concat(this, tail));
 	}
 
@@ -415,6 +417,7 @@ public final class ListMaker<T> implements Iterable<T> {
 	 * @since 1.1
 	 */
 	public ListMaker<T> concat(T... tail) {
+		checkNotNull(tail);
 		return with(Iterables.concat(this, Arrays.asList(tail)));
 	}
 
@@ -423,7 +426,7 @@ public final class ListMaker<T> implements Iterable<T> {
 	 * 
 	 * @return TODO.
 	 */
-	public T max(Ordering<? super T> ordering) {
+	public T max(@Nullable Ordering<? super T> ordering) {
 		return ordering.max(values);
 	}
 
@@ -432,7 +435,7 @@ public final class ListMaker<T> implements Iterable<T> {
 	 * 
 	 * @return TODO.
 	 */
-	public T min(Ordering<? super T> ordering) {
+	public T min(@Nullable Ordering<? super T> ordering) {
 		return ordering.min(values);
 	}
 
@@ -451,9 +454,8 @@ public final class ListMaker<T> implements Iterable<T> {
 	 * 
 	 * @return TODO.
 	 */
-	public <V> V reduce(V initialValue, Accumulator<V, T> operator) {
+	public <V> V reduce(@Nullable V initialValue, Accumulator<V, T> operator) {
 		checkNotNull(operator);
-
 		V accumulator = initialValue;
 		for (T value : this) {
 			accumulator = operator.apply(accumulator, value);
@@ -577,7 +579,7 @@ public final class ListMaker<T> implements Iterable<T> {
 	 * 
 	 * @return TODO.
 	 */
-	public <R> TreeSet<R> toTreeSet(Function<? super T, R> transform, Comparator<? super R> ordering) {
+	public <R> TreeSet<R> toTreeSet(Function<? super T, R> transform, @Nullable Comparator<? super R> ordering) {
 		checkNotNull(transform);
 		TreeSet<R> set = new TreeSet<R>(ordering);
 		Iterables.addAll(set, Iterables.transform(values, transform));
@@ -689,6 +691,7 @@ public final class ListMaker<T> implements Iterable<T> {
 	 * Execute the given {@code action} on each element of type T.
 	 */
 	public void forEach(Action<? super T> action) {
+		checkNotNull(action);
 		for (T value : values) {
 			action.execute(value);
 		}
@@ -698,6 +701,7 @@ public final class ListMaker<T> implements Iterable<T> {
 	 * Execute the given {@code action} on each element of type T.
 	 */
 	public void forEach(ActionWithIndex<? super T> action) {
+		checkNotNull(action);
 		int index = 0;
 		for (T value : values) {
 			action.execute(index++, value);
