@@ -17,16 +17,37 @@
  */
 package net.gageot.listmaker;
 
-import static com.google.common.base.Functions.*;
-import static com.google.common.base.Predicates.*;
-import static java.util.Arrays.*;
-import static net.gageot.listmaker.ListMaker.*;
-import static org.fest.assertions.MapAssert.*;
-import java.util.*;
-import org.fest.assertions.*;
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
+import org.fest.assertions.Assertions;
+import org.fest.assertions.BooleanAssert;
+import org.fest.assertions.ListAssert;
+import org.fest.assertions.MapAssert;
+import org.fest.assertions.ObjectArrayAssert;
+import org.fest.assertions.ObjectAssert;
 import org.junit.Test;
-import com.google.common.base.*;
-import com.google.common.collect.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.TreeSet;
+import static com.google.common.base.Functions.toStringFunction;
+import static com.google.common.base.Predicates.alwaysTrue;
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.in;
+import static java.util.Arrays.asList;
+import static net.gageot.listmaker.ListMaker.where;
+import static net.gageot.listmaker.ListMaker.whereEquals;
+import static net.gageot.listmaker.ListMaker.with;
+import static org.fest.assertions.MapAssert.entry;
 
 public class ListMakerTest {
 	@Test
@@ -441,6 +462,76 @@ public class ListMakerTest {
 		});
 
 		assertThat(indices).containsExactly("A0", "B1", "C2");
+	}
+
+	@Test
+	public void canVerifyAllValuesSatisfyCondition() {
+		boolean allPositive = with(1, 2, 3).all(new Predicate<Integer>() {
+			@Override
+			public boolean apply(Integer value) {
+				return value >= 0;
+			}
+		});
+
+		assertThat(allPositive).isTrue();
+	}
+
+	@Test
+	public void canVerifyOneValueDoesNotSatisfyCondition() {
+		boolean allPositive = with(1, 2, -1).all(new Predicate<Integer>() {
+			@Override
+			public boolean apply(Integer value) {
+				return value >= 0;
+			}
+		});
+
+		assertThat(allPositive).isFalse();
+	}
+
+	@Test
+	public void canVerifyAnyValuesSatisfiesCondition() {
+		boolean anyPositive = with(1, 2, 3).any(new Predicate<Integer>() {
+			@Override
+			public boolean apply(Integer value) {
+				return value >= 0;
+			}
+		});
+
+		assertThat(anyPositive).isTrue();
+	}
+
+	@Test
+	public void canVerifyNoValueSatisfyCondition() {
+		boolean anyPositive = with(-1, -2, -1).all(new Predicate<Integer>() {
+			@Override
+			public boolean apply(Integer value) {
+				return value >= 0;
+			}
+		});
+
+		assertThat(anyPositive).isFalse();
+	}
+
+	@Test
+	public void canSkipAValue() {
+		Iterable<String> lastTwo = with("A", "B", "C").skip(1);
+
+		assertThat(lastTwo).containsExactly("B", "C");
+	}
+
+	@Test
+	public void canSkipAllValues() {
+		Iterable<String> empty = with("A", "B", "C").skip(3);
+
+		assertThat(empty).isEmpty();
+	}
+
+	@Test
+	public void canSkipZeroValue() {
+		ListMaker<String> values = with("A", "B", "C");
+		ListMaker<String> all = values.skip(0);
+
+		assertThat((Object) all).isSameAs(values);
 	}
 
 	private static <T> ListAssert assertThat(Iterable<T> actual) {
