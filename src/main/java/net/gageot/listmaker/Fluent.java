@@ -15,13 +15,12 @@
  */
 package net.gageot.listmaker;
 
-import static java.util.Objects.*;
-
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import javax.annotation.*;
+import static java.util.Objects.requireNonNull;
 
 @FunctionalInterface
 public interface Fluent<T> extends Iterable<T> {
@@ -213,6 +212,11 @@ public interface Fluent<T> extends Iterable<T> {
     }
   }
 
+  public default void forEachOrdered(Consumer<? super T> action) {
+    requireNonNull(action);
+    stream().forEachOrdered(action);
+  }
+
   public default Iterator<T> iterator() {
     return stream().iterator();
   }
@@ -317,6 +321,42 @@ public interface Fluent<T> extends Iterable<T> {
   public default <V, L extends List<V>> Fluent<V> flatMap(Function<? super T, L> toList) {
     requireNonNull(toList);
     return () -> stream().flatMap(toList.andThen(l -> l.stream()));
+  }
+
+  public default Fluent<T> substream(long startInclusive) {
+    return () -> stream().substream(startInclusive);
+  }
+
+  public default Fluent<T> substream(long startInclusive, long endExclusive) {
+    return () -> stream().substream(startInclusive, endExclusive);
+  }
+
+  public default Fluent<T> sorted() {
+    return () -> stream().sorted();
+  }
+
+  public default Fluent<T> distinct() {
+    return () -> stream().distinct();
+  }
+
+  public default Fluent<T> sorted(Comparator<? super T> comparator) {
+    requireNonNull(comparator);
+    return () -> stream().sorted(comparator);
+  }
+
+  public default Fluent<T> reversed(Comparator<? super T> comparator) {
+    requireNonNull(comparator);
+    return () -> stream().sorted(comparator.reversed());
+  }
+
+  public default <C extends Comparable<? super C>> Fluent<T> sortedOn(Function<? super T, C> comparator) {
+    requireNonNull(comparator);
+    return () -> stream().sorted((l, r) -> comparator.apply(l).compareTo(comparator.apply(r)));
+  }
+
+  public default <C extends Comparable<? super C>> Fluent<T> reversedOn(Function<? super T, C> comparator) {
+    requireNonNull(comparator);
+    return () -> stream().sorted((l, r) -> comparator.apply(r).compareTo(comparator.apply(l)));
   }
 
   //@SafeVarargs
